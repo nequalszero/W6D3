@@ -45,12 +45,16 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const FollowToggle = __webpack_require__(1);
+	const UsersSearch = __webpack_require__(3);
 	
 	$( () => {
 	  $("button.follow-toggle").each((idx, el) => {
 	    let toggle = new FollowToggle(el);
 	  });
 	
+	  $("nav.users-search").each((idx, el) => {
+	    let search = new UsersSearch(el);
+	  });
 	});
 
 
@@ -114,6 +118,47 @@
 	}
 	
 	module.exports = FollowToggle;
+
+
+/***/ },
+/* 2 */,
+/* 3 */
+/***/ function(module, exports) {
+
+	class UsersSearch {
+	  constructor(el) {
+	    this.$el = $(el);
+	    this.input = this.$el.find("input");
+	    this.result = this.$el.find(".users");
+	
+	    this.input.on("keyup", e => this.handleInput(e));
+	  }
+	
+	  handleInput(e) {
+	    $.ajax({
+	      method: "GET",
+	      url: "/users/search",
+	      dataType: "json",
+	      data: {
+	        query: this.input.val()
+	      },
+	      success: (users) => {
+	        this.renderResults(users);
+	      }
+	    });
+	  }
+	
+	  renderResults(users) {
+	    this.result.empty();
+	
+	    users.forEach( (user) => {
+	      let $li = $(`<li><a href="/users/${user.id}">${user.username}</a></li>`);
+	      this.result.append($li);
+	    });
+	  }
+	}
+	
+	module.exports = UsersSearch;
 
 
 /***/ }
