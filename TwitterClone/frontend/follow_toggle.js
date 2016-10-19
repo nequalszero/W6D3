@@ -11,13 +11,24 @@ class FollowToggle {
   render() {
     if (this.followState === "followed") {
       this.$el.text("Unfollow!");
-    } else { this.$el.text("Follow!"); }
+      this.$el.prop("disabled", false);
+    } else if (this.followState === "unfollowed") {
+      this.$el.text("Follow!");
+      this.$el.prop("disabled", false);
+    } else if (this.followState === "following") {
+      this.$el.prop("disabled", true);
+    } else if (this.followState === "unfollowing") {
+      this.$el.prop("disabled", true);
+    }
   }
 
   handleClick(e) {
     e.preventDefault();
 
     if (this.followState === "unfollowed") {
+      this.followState = "following";
+      this.render();
+
       $.ajax({
         method: "POST",
         url: `/users/${this.userId}/follow.json`,
@@ -27,6 +38,9 @@ class FollowToggle {
         }
       });
     } else {
+      this.followState = "unfollowing";
+      this.render();
+
       $.ajax({
         method: "DELETE",
         url: `/users/${this.userId}/follow.json`,
