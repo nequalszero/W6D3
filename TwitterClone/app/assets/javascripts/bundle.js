@@ -46,6 +46,7 @@
 
 	const FollowToggle = __webpack_require__(1);
 	const UsersSearch = __webpack_require__(3);
+	const TweetCompose = __webpack_require__(4);
 	
 	$( () => {
 	  $("button.follow-toggle").each((idx, el) => {
@@ -54,6 +55,10 @@
 	
 	  $("nav.users-search").each((idx, el) => {
 	    let search = new UsersSearch(el);
+	  });
+	
+	  $("form.tweet-compose").each((idx, el) => {
+	    let tweet = new TweetCompose(el);
 	  });
 	});
 
@@ -177,6 +182,43 @@
 	}
 	
 	module.exports = UsersSearch;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	class TweetCompose {
+	  constructor(el) {
+	    this.$el = $(el);
+	
+	    this.$el.on("submit", e => this.submit(e));
+	  }
+	
+	  submit(e) {
+	    e.preventDefault();
+	
+	    let newTweet = this.$el.serializeJSON();
+	
+	    $.ajax({
+	      method: "POST",
+	      url: "/tweets",
+	      dataType: "json",
+	      data: newTweet,
+	      success: (tweet) => {
+	        this.renderResults(tweet);
+	      }
+	    });
+	  }
+	
+	  renderResults(tweet) {
+	
+	  }
+	
+	}
+	
+	
+	module.exports = TweetCompose;
 
 
 /***/ }
